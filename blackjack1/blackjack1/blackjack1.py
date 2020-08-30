@@ -93,5 +93,190 @@ dieci = [ quadri10, fiori10, cuori10, picche10, \
             quadriJ, fioriJ, cuoriJ, piccheJ, \
             quadriQ, fioriQ, cuoriQ, piccheQ, \
             quadriK, fioriK, cuoriK, piccheK ]
+def somma(carta):
+    #Ritorna il totale delle carte.
+    if carta in assi:
+        return 11
+    elif carta in due:
+        return 2
+    elif carta in tre:
+        return 3
+    elif carta in quattro:
+        return 4
+    elif carta in cinque:
+        return 5
+    elif carta in sei:
+        return 6
+    elif carta in sette:
+        return 7
+    elif carta in otto:
+        return 8
+    elif carta in nove:
+        return 9
+    elif carta in dieci:
+        return 10
+    else:
+        print ("Errore")
+        exit()
 
+def somma2(carta, utenteSomma):
+    #Ritorna il totale delle carte.
+    if carta in assi:
+        valore = 11
+        temp = valore + utenteSomma
+        if temp > 21:
+            return 1
+        else:
+            return 11
+        return 11
+    elif carta in due:
+        return 2
+    elif carta in tre:
+        return 3
+    elif carta in quattro:
+        return 4
+    elif carta in cinque:
+        return 5
+    elif carta in sei:
+        return 6
+    elif carta in sette:
+        return 7
+    elif carta in otto:
+        return 8
+    elif carta in nove:
+        return 9
+    elif carta in dieci:
+        return 10
+    else:
+        print ("Errore")
+        exit()
+
+def generaCarte(mazzo, listagiocatori):
+    #Genera una carta dal mazzo, la rimuove da esso, e la aggiunge alla lista giocatori.
+    numeroassi = 0
+    carta = random.choice(mazzo)
+    mazzo.remove(carta)
+    listagiocatori.append(carta)
+    if carta in assi:
+        numeroassi = 1
+    return carta, numeroassi
+
+def inizioGioco(mazzo, userlist, dealerlist):
+    #Genera due carte per l'avversario e l'utente, una alla volta per ognuno. 
+    utenteAssi = 0
+    avversarioAssi = 0
+    carta1, numeroassi = generaCarte(mazzo, userlist)
+    utenteAssi = utenteAssi + numeroassi
+    carta2, numeroassi = generaCarte(mazzo, dealerlist)
+    avversarioAssi = avversarioAssi + numeroassi
+    carta3, numeroassi = generaCarte(mazzo, userlist)
+    utenteAssi = utenteAssi + numeroassi
+    carta4, numeroassi = generaCarte(mazzo, dealerlist)
+    avversarioAssi = avversarioAssi + numeroassi
+    return somma(carta1) + somma(carta3), utenteAssi, somma(carta2) + somma(carta4), avversarioAssi
+
+ef main():
+    copiacarte = copy.copy(carte)
+    stai = False
+    partite = 0
+    vittorie = 0
+    pareggi = 0
+    sconfitte = 0
+    numerocarteutente = 0
+    numerocarteavversario = 0
+    utenteCarte = []
+    avversarioCarte =[]
+    
+    pygame.init()
+    screen = pygame.display.set_mode((640, 480))
+    pygame.display.set_caption("BlackJack")
+    font = pygame.font.SysFont('arial', 15)
+    cartaTxt = font.render('Carta', 1, nero)
+    staiTxt = font.render('Stai', 1, nero)
+    rigiocaTxt = font.render('Rigioca', 1, nero)
+    haivintoTxt = font.render('Hai vinto!', 1, bianco)
+    haipersoTxt = font.render('Hai perso!', 1, bianco)
+    pariTxt = font.render('Parità!', 1, bianco)
+    infoTxt = font.render('Info', 1, nero)
+    utenteSomma, utenteAssi, avversarioSomma, avversarioAssi = inizioGioco(copiacarte, utenteCarte, avversarioCarte)
+
+    background = pygame.Surface(screen.get_size())
+    background = background.convert()
+    background.fill((80, 150, 15))
+    cartaB = pygame.draw.rect(background, grigio, (10, 445, 75, 25))
+    staiB = pygame.draw.rect(background, grigio, (95, 445, 75, 25))
+    risultatoB = pygame.draw.rect(background, grigio, (555, 375, 75, 75))
+    infoB = pygame.draw.rect(background, grigio, (555, 15, 50, 25))
+
+    t = True
+    while t:
+        gameover = True if (utenteSomma > 21) or len(utenteCarte) == 5 else False
+        if utenteSomma == 21 and len(utenteCarte) == 2:
+                gameover = True
+        elif avversarioSomma == 21 and len(avversarioCarte) == 2:
+                gameover = True
+
+        partiteTxt = font.render('Partite: %i' %partite, 1, nero)
+        vittorieTxt = font.render('Vittorie: %i' %vittorie, 1, nero)
+        pareggiTxt = font.render('Pareggi: %i' %pareggi, 1, nero)
+        sconfitteTxt = font.render('Sconfitte: %i' %sconfitte, 1, nero)
+
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                t = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and infoB.collidepoint(pygame.mouse.get_pos()):
+                ctypes.windll.user32.MessageBoxW(0, "Blackjack è un gioco di carte. \nLo scopo del gioco è pescare carte il più vicino possibile a 21 punti \nsenza andare oltre (se la somma delle carte è maggiore di 21 avrai sballato). \nTutte le figure valgono 10 punti, assi valgono come 1 o 11, \ne tutte le altre carte valgono i loro valori numerici.", "Informazioni", 0)
+            elif event.type == pygame.MOUSEBUTTONDOWN and not (stai or gameover) and cartaB.collidepoint(pygame.mouse.get_pos()):
+                carta, numeroassi = generaCarte(copiacarte, utenteCarte)
+                numerocarteutente = numerocarteutente + 1
+                utenteAssi = utenteAssi + numeroassi
+                utenteSomma = utenteSomma + somma2(carta, utenteSomma)
+                print ('Utente: %i' % utenteSomma)
+                while utenteSomma > 21 and utenteAssi > 0:
+                    utenteAssi = utenteAssi - 1
+                    utenteSomma = utenteSomma - 10
+            elif event.type == pygame.MOUSEBUTTONDOWN and not gameover and staiB.collidepoint(pygame.mouse.get_pos()):
+                stai = True
+                while avversarioSomma <= utenteSomma and avversarioSomma < 17:
+                    carta, numeroassi = generaCarte(copiacarte, avversarioCarte)
+                    numerocarteavversario = numerocarteavversario + 1
+                    avversarioAssi = avversarioAssi + numeroassi
+                    avversarioSomma = avversarioSomma + somma2(carta, avversarioSomma)
+                    print ('Avversario: %i' % avversarioSomma)
+                    while avversarioSomma > 21 and avversarioAssi > 0:
+                        avversarioAssi = avversarioAssi - 1
+                        avversarioSomma = avversarioSomma - 10
+            elif event.type == pygame.MOUSEBUTTONDOWN and (gameover or stai) and rigiocaB.collidepoint(pygame.mouse.get_pos()):
+                partite = partite + 1
+                if utenteSomma > 21 and avversarioSomma > 21:
+                    pass
+                elif utenteSomma == avversarioSomma:
+                    if numerocarteutente == numerocarteavversario:
+                        screen.blit(pariTxt, (270, 200))
+                        pareggi = pareggi + 1
+                    elif numerocarteutente < numerocarteavversario:
+                        screen.blit(haivintoTxt, (270, 200))
+                        vittorie = vittorie + 1
+                    else:
+                        screen.blit(haipersoTxt, (270, 200))
+                        sconfitte = sconfitte + 1
+                elif utenteSomma <= 21 and avversarioSomma < utenteSomma or avversarioSomma > 21:
+                    screen.blit(haivintoTxt, (270, 200))
+                    vittorie = vittorie + 1
+                elif utenteSomma <= 21 and len(utenteCarte) == 5:
+                    screen.blit(haivintoTxt, (270, 200))
+                    vittorie = vittorie + 1
+                else:
+                    screen.blit(haipersoTxt, (270, 200))
+                    sconfitte = sconfitte + 1
+                gameover = False
+                stai = False
+                numerocarteutente = 0
+                numerocarteavversario = 0
+                utenteCarte = []
+                avversarioCarte = []
+                copiacarte = copy.copy(carte)
+                utenteSomma, utenteAssi, avversarioSomma, avversarioAssi = inizioGioco(copiacarte, utenteCarte, avversarioCarte)
+                rigiocaB = pygame.draw.rect(background, (80, 150, 15), (270, 225, 75, 25))
 
