@@ -175,7 +175,7 @@ def inizioGioco(mazzo, userlist, dealerlist):
     avversarioAssi = avversarioAssi + numeroassi
     return somma(carta1) + somma(carta3), utenteAssi, somma(carta2) + somma(carta4), avversarioAssi
 
-ef main():
+def main():
     copiacarte = copy.copy(carte)
     stai = False
     partite = 0
