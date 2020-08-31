@@ -62,6 +62,7 @@ fioriK = pygame.image.load('resources/cards/kc.png')
 cuoriK = pygame.image.load('resources/cards/kh.png')
 piccheK = pygame.image.load('resources/cards/ks.png')
 
+#Icona
 pygame.display.set_icon(icona)
 nero = (0,0,0)
 bianco = (255,255,255)
@@ -93,6 +94,7 @@ dieci = [ quadri10, fiori10, cuori10, picche10, \
             quadriJ, fioriJ, cuoriJ, piccheJ, \
             quadriQ, fioriQ, cuoriQ, piccheQ, \
             quadriK, fioriK, cuoriK, piccheK ]
+
 def somma(carta):
     #Ritorna il totale delle carte.
     if carta in assi:
@@ -200,6 +202,11 @@ def main():
     infoTxt = font.render('Info', 1, nero)
     utenteSomma, utenteAssi, avversarioSomma, avversarioAssi = inizioGioco(copiacarte, utenteCarte, avversarioCarte)
 
+    #utenteSommaTxt = font.render('Utente: %i' %utenteSomma, 1, nero)
+    #avversarioSommaTxt = font.render('Avversario: %i' %avversarioSomma, 1, nero)
+    print ('Utente: %i' % utenteSomma)
+    #screen.blit(utenteSommaTxt, (75, 270))
+    #screen.blit(avversarioSommaTxt, (75, 240))
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((80, 150, 15))
@@ -226,16 +233,17 @@ def main():
                 pygame.quit()
                 t = False
             elif event.type == pygame.MOUSEBUTTONDOWN and infoB.collidepoint(pygame.mouse.get_pos()):
-                ctypes.windll.user32.MessageBoxW(0, "Blackjack è un gioco di carte. \nLo scopo del gioco è pescare carte il più vicino possibile a 21 punti \nsenza andare oltre (se la somma delle carte è maggiore di 21 avrai sballato). \nTutte le figure valgono 10 punti, assi valgono come 1 o 11, \ne tutte le altre carte valgono i loro valori numerici.", "Informazioni", 0)
+                ctypes.windll.user32.MessageBoxW(0, "Blackjack è un gioco di carte. \nLo scopo del gioco è pescare carte il più vicino possibile a 21 punti \nsenza andare oltre (se la somma delle carte è maggiore di 21 avrai sballato). \nTutte le figure valgono 10 punti, assi valgono come 1 o 11, \ne tutte le altre carte valgono i loro valori numerici.\nNel caso in cui i punteggi di utente e avversario siano uguali, \nvince chi ha utilizzato meno carte", "Informazioni", 0)
             elif event.type == pygame.MOUSEBUTTONDOWN and not (stai or gameover) and cartaB.collidepoint(pygame.mouse.get_pos()):
                 carta, numeroassi = generaCarte(copiacarte, utenteCarte)
                 numerocarteutente = numerocarteutente + 1
                 utenteAssi = utenteAssi + numeroassi
                 utenteSomma = utenteSomma + somma2(carta, utenteSomma)
-                print ('Utente: %i' % utenteSomma)
                 while utenteSomma > 21 and utenteAssi > 0:
                     utenteAssi = utenteAssi - 1
                     utenteSomma = utenteSomma - 10
+                print ('Utente: %i' % utenteSomma)
+                #screen.blit(utenteSommaTxt, (75, 270))
             elif event.type == pygame.MOUSEBUTTONDOWN and not gameover and staiB.collidepoint(pygame.mouse.get_pos()):
                 stai = True
                 while avversarioSomma <= utenteSomma and avversarioSomma < 17:
@@ -243,10 +251,11 @@ def main():
                     numerocarteavversario = numerocarteavversario + 1
                     avversarioAssi = avversarioAssi + numeroassi
                     avversarioSomma = avversarioSomma + somma2(carta, avversarioSomma)
-                    print ('Avversario: %i' % avversarioSomma)
                     while avversarioSomma > 21 and avversarioAssi > 0:
                         avversarioAssi = avversarioAssi - 1
                         avversarioSomma = avversarioSomma - 10
+                    print ('Avversario: %i' % avversarioSomma)
+                    #screen.blit(avversarioSommaTxt, (75, 240))
             elif event.type == pygame.MOUSEBUTTONDOWN and (gameover or stai) and rigiocaB.collidepoint(pygame.mouse.get_pos()):
                 partite = partite + 1
                 if utenteSomma > 21 and avversarioSomma > 21:
@@ -278,5 +287,51 @@ def main():
                 avversarioCarte = []
                 copiacarte = copy.copy(carte)
                 utenteSomma, utenteAssi, avversarioSomma, avversarioAssi = inizioGioco(copiacarte, utenteCarte, avversarioCarte)
+                print ('Utente: %i' % utenteSomma)
                 rigiocaB = pygame.draw.rect(background, (80, 150, 15), (270, 225, 75, 25))
+
+        screen.blit(background, (0, 0))
+        screen.blit(cartaTxt, (39, 448))
+        screen.blit(staiTxt, (116, 448))
+        screen.blit(partiteTxt, (565, 353))
+        screen.blit(vittorieTxt, (565, 378))
+        screen.blit(pareggiTxt, (565, 403))
+        screen.blit(sconfitteTxt, (565, 428))
+        screen.blit(infoTxt, (565, 18))
+
+         #dispone le carte dell'avversario
+        for carta in avversarioCarte:
+            x = 10 + avversarioCarte.index(carta) * 110
+            screen.blit(carta, (x, 10))
+        screen.blit(retrocarta, (120, 10))
+
+        #dispone le carte dell'utente
+        for carta in utenteCarte:
+            x = 10 + utenteCarte.index(carta) * 110
+            screen.blit(carta, (x, 295))
+
+        #quando la partita è finita, compare il bottone rigioca e mostra la seconda carta dell'avversario
+        if gameover or stai:
+            if utenteSomma > 21 and avversarioSomma > 21:
+                    pass
+            elif utenteSomma == avversarioSomma:
+                    if numerocarteutente == numerocarteavversario:
+                        screen.blit(pariTxt, (270, 200))
+                    elif numerocarteutente < numerocarteavversario:
+                            screen.blit(haivintoTxt, (270, 200))
+                    else:
+                            screen.blit(haipersoTxt, (270, 200))
+            elif utenteSomma <= 21 and avversarioSomma < utenteSomma or avversarioSomma > 21:
+                    screen.blit(haivintoTxt, (270, 200))
+            else:
+                    screen.blit(haipersoTxt, (270, 200))
+                    
+            rigiocaB = pygame.draw.rect(background, grigio, (270, 225, 75, 25))
+            screen.blit(rigiocaTxt, (287, 228))
+            screen.blit(avversarioCarte[1], (120, 10))
+            
+        pygame.display.update()
+
+if __name__ == "__main__": main()
+    
 
