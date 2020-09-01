@@ -202,11 +202,7 @@ def main():
     infoTxt = font.render('Info', 1, nero)
     utenteSomma, utenteAssi, avversarioSomma, avversarioAssi = inizioGioco(copiacarte, utenteCarte, avversarioCarte)
 
-    #utenteSommaTxt = font.render('Utente: %i' %utenteSomma, 1, nero)
-    #avversarioSommaTxt = font.render('Avversario: %i' %avversarioSomma, 1, nero)
     print ('Utente: %i' % utenteSomma)
-    #screen.blit(utenteSommaTxt, (75, 270))
-    #screen.blit(avversarioSommaTxt, (75, 240))
     background = pygame.Surface(screen.get_size())
     background = background.convert()
     background.fill((80, 150, 15))
@@ -243,7 +239,6 @@ def main():
                     utenteAssi = utenteAssi - 1
                     utenteSomma = utenteSomma - 10
                 print ('Utente: %i' % utenteSomma)
-                #screen.blit(utenteSommaTxt, (75, 270))
             elif event.type == pygame.MOUSEBUTTONDOWN and not gameover and staiB.collidepoint(pygame.mouse.get_pos()):
                 stai = True
                 while avversarioSomma <= utenteSomma and avversarioSomma < 17:
@@ -255,7 +250,6 @@ def main():
                         avversarioAssi = avversarioAssi - 1
                         avversarioSomma = avversarioSomma - 10
                     print ('Avversario: %i' % avversarioSomma)
-                    #screen.blit(avversarioSommaTxt, (75, 240))
             elif event.type == pygame.MOUSEBUTTONDOWN and (gameover or stai) and rigiocaB.collidepoint(pygame.mouse.get_pos()):
                 partite = partite + 1
                 if utenteSomma > 21 and avversarioSomma > 21:
